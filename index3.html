@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Καλωσήρθατε</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Nunito', sans-serif; background: #f0f4f1; min-height: 100vh; }
+    header { background: #1a6b4a; padding: 2rem 1.25rem 1.5rem; text-align: center; }
+    header h1 { color: #fff; font-size: 1.4rem; font-weight: 700; }
+    header p { color: rgba(255,255,255,0.75); font-size: 0.85rem; margin-top: 0.3rem; }
+    .container { max-width: 480px; margin: 0 auto; padding: 1.25rem 1rem 2rem; }
+    .field { margin-bottom: 0.85rem; }
+    .field label { display: block; font-size: 13px; color: #555; margin-bottom: 4px; }
+    .field input { width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 10px; font-size: 14px; font-family: 'Nunito', sans-serif; }
+    .consent-box { background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 0.85rem; }
+    .consent-title { font-size: 13px; font-weight: 700; color: #1a6b4a; margin-bottom: 0.6rem; }
+    .check-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 0.65rem; }
+    .check-row input[type=checkbox] { margin-top: 2px; width: 17px; height: 17px; flex-shrink: 0; accent-color: #1a6b4a; }
+    .check-row span { font-size: 12.5px; color: #555; line-height: 1.5; }
+    .btn { width: 100%; background: #1a6b4a; color: #fff; border: none; border-radius: 14px; padding: 0.9rem; font-size: 0.95rem; font-weight: 700; font-family: 'Nunito', sans-serif; cursor: pointer; margin-top: 0.5rem; }
+    .btn:active { opacity: 0.85; }
+    .skip { text-align: center; margin-top: 0.85rem; font-size: 12px; color: #999; }
+    .skip a { color: #1a6b4a; text-decoration: underline; cursor: pointer; }
+    .msg { display: none; background: #e8f4ee; border: 1px solid #9fd4b8; border-radius: 10px; padding: 0.85rem; text-align: center; font-size: 13px; color: #1a6b4a; margin-top: 0.75rem; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Καλωσήρθατε!</h1>
+  <p>Εγγραφείτε για να λαμβάνετε<br>αποκλειστικές προσφορές</p>
+</header>
+
+<div class="container">
+  <div class="field">
+    <label>Ονοματεπώνυμο *</label>
+    <input type="text" id="name" placeholder="π.χ. Γιώργος Παπαδόπουλος">
+  </div>
+  <div class="field">
+    <label>Τηλέφωνο *</label>
+    <input type="tel" id="phone" placeholder="π.χ. 694 000 0000">
+  </div>
+  <div class="field">
+    <label>Email</label>
+    <input type="email" id="email" placeholder="π.χ. email@gmail.com">
+  </div>
+
+  <div class="consent-box">
+    <div class="consent-title">🔔 Ειδοποιήσεις & Συναίνεση</div>
+    <div class="check-row">
+      <input type="checkbox" id="c1">
+      <span>Επιθυμώ να λαμβάνω ειδοποιήσεις (push notifications) για νέες προσφορές και ενημερώσεις του φαρμακείου.</span>
+    </div>
+    <div class="check-row">
+      <input type="checkbox" id="c2">
+      <span>Συναινώ στην επεξεργασία των προσωπικών μου δεδομένων αποκλειστικά για την αποστολή προσφορών, σύμφωνα με τον GDPR.</span>
+    </div>
+    <div class="check-row">
+      <input type="checkbox" id="c3">
+      <span>Επιθυμώ να λαμβάνω ενημερώσεις μέσω Viber.</span>
+    </div>
+  </div>
+
+  <button class="btn" onclick="submitForm()">➜ Δείτε τις προσφορές μας</button>
+  <div class="msg" id="msg">✅ Η εγγραφή σας καταχωρήθηκε! Μεταφέρεστε στις προσφορές...</div>
+  <div class="skip"><a onclick="goToOffers()">Παράλειψη — μετάβαση στις προσφορές</a></div>
+</div>
+
+<script>
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzo45uFnm2wWhql--BBvnyGmBAePI4O23PeyC8QVrofh_hJglpGS_EPvcHrhInfqU6amQ/exec';
+
+  function goToOffers() {
+    window.location.href = 'offers.html';
+  }
+
+  function submitForm() {
+    const name = document.getElementById('name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const email = document.getElementById('email').value.trim();
+
+    const data = {
+      name, phone, email,
+      push: document.getElementById('c1').checked,
+      gdpr: document.getElementById('c2').checked,
+      viber: document.getElementById('c3').checked
+    };
+
+    if (name || phone || email) {
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify(data)
+      }).catch(() => {});
+    }
+
+    document.getElementById('msg').style.display = 'block';
+    setTimeout(() => window.location.href = 'offers.html', 2000);
+  }
+
+
+</script>
+</body>
+</html>
