@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pharmacy Club - Νέα</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f6e56">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Nunito', sans-serif; background: #f0f4f1; min-height: 100vh; }
+    header { background: #0f6e56; padding: 1.1rem 1rem 0.9rem; text-align: center; }
+    header p.club { color: rgba(255,255,255,0.7); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 2px; }
+    header h1 { color: #fff; font-size: 1.15rem; font-weight: 500; margin: 0; }
+    .nav-bar { display: flex; border-bottom: 0.5px solid #e0e0e0; background: #fff; }
+    .nav-btn { flex: 1; padding: 0.65rem 0; font-size: 13px; font-weight: 500; color: #888; text-align: center; border: none; background: none; cursor: pointer; text-decoration: none; display: block; }
+    .nav-btn.active { color: #0f6e56; border-bottom: 2px solid #0f6e56; }
+    .container { max-width: 480px; margin: 0 auto; padding: 0.85rem 0.85rem 2rem; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .news-card { background: #fff; border: 0.5px solid #e0e0e0; border-radius: 14px; margin-bottom: 12px; overflow: hidden; opacity: 0; animation: fadeUp 0.8s ease forwards; }
+    .news-card:nth-child(1) { animation-delay: 0.1s; }
+    .news-card:nth-child(2) { animation-delay: 0.25s; }
+    .news-card:nth-child(3) { animation-delay: 0.4s; }
+    .news-card:nth-child(4) { animation-delay: 0.55s; }
+    .news-card:nth-child(5) { animation-delay: 0.7s; }
+    .news-top { display: flex; align-items: center; gap: 10px; padding: 0.85rem 1rem 0.6rem; }
+    .news-emoji { width: 44px; height: 44px; border-radius: 10px; background: #e1f5ee; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
+    .news-meta { flex: 1; min-width: 0; }
+    .news-cat { font-size: 11px; font-weight: 500; color: #0f6e56; text-transform: uppercase; letter-spacing: 0.05em; }
+    .news-date { font-size: 11px; color: #aaa; margin-top: 1px; }
+    .news-body { padding: 0 1rem 0.85rem; }
+    .news-title { font-size: 1.05rem; font-weight: 500; color: #1a1a1a; margin-bottom: 5px; }
+    .news-text { font-size: 14px; color: #666; line-height: 1.55; }
+    .news-tag { display: inline-block; background: #e1f5ee; color: #085041; font-size: 11px; padding: 2px 8px; border-radius: 20px; margin-top: 8px; }
+    .loading { text-align: center; padding: 3rem 1rem; color: #888; }
+    .spinner { width: 30px; height: 30px; border: 3px solid #e0e0e0; border-top-color: #0f6e56; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1rem; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .error { background: #fff3f0; border: 1px solid #f5c0b0; border-radius: 12px; padding: 1rem; text-align: center; color: #c0392b; font-size: 0.85rem; }
+    footer { text-align: center; font-size: 11px; color: #bbb; margin-top: 1rem; padding-top: 0.85rem; border-top: 0.5px solid #e5e5e5; }
+  </style>
+</head>
+<body>
+
+<header>
+  <p class="club">Pharmacy Club</p>
+  <h1>Ενημερώσεις & Νέα</h1>
+</header>
+
+<div class="nav-bar">
+  <a href="offers.html" class="nav-btn">🏷️ Προσφορές</a>
+  <a href="news.html" class="nav-btn active">📢 Νέα</a>
+</div>
+
+<div class="container">
+  <div id="content">
+    <div class="loading">
+      <div class="spinner"></div>
+      Φορτώνω ανακοινώσεις...
+    </div>
+  </div>
+  <footer>Ενημερώνεται αυτόματα από το φαρμακείο</footer>
+</div>
+
+<script>
+  const NEWS_CSV_URL = "ΒΑΛΕ_ΕΔΩ_ΤΟ_CSV_LINK";
+
+  // Demo δεδομένα για προεπισκόπηση
+  const DEMO = [
+    { title: "Δωρεάν εμβολιασμός γρίπης", text: "Από 1 έως 30 Ιουνίου πραγματοποιούμε δωρεάν εμβολιασμό γρίπης για άτομα άνω των 60 ετών. Δεν απαιτείται ραντεβού.", cat: "Καμπάνια", emoji: "💉", tag: "Δωρεάν", date: "2 Ιουνίου 2026" },
+    { title: "Καλοκαιρινές ώρες λειτουργίας", text: "Από 1 Ιουλίου το φαρμακείο μας θα λειτουργεί Δευτ–Παρ 08:00–14:00 και 17:30–21:00. Σάββατο 09:00–14:00.", cat: "Ενημέρωση", emoji: "☀️", tag: "Ωράριο", date: "28 Μαΐου 2026" },
+    { title: "Δωρεάν μέτρηση πίεσης & σακχάρου", text: "Κάθε Τετάρτη 10:00–12:00 προσφέρουμε δωρεάν μέτρηση αρτηριακής πίεσης και σακχάρου χωρίς ραντεβού.", cat: "Υγεία", emoji: "🩺", tag: "Κάθε Τετάρτη", date: "20 Μαΐου 2026" }
+  ];
+
+  function parseCSV(text) {
+    const lines = text.trim().split('\n');
+    return lines.slice(1).map(line => {
+      const cols = [];
+      let cur = '', inQ = false;
+      for (let i = 0; i < line.length; i++) {
+        const c = line[i];
+        if (c === '"') { inQ = !inQ; }
+        else if (c === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
+        else { cur += c; }
+      }
+      cols.push(cur.trim());
+      return {
+        date: cols[0] || '',
+        title: cols[1] || '',
+        text: cols[2] || '',
+        cat: cols[3] || '',
+        emoji: cols[4] || '📢',
+        tag: cols[5] || ''
+      };
+    }).filter(r => r.title);
+  }
+
+  function renderItems(items) {
+    let html = '';
+    items.forEach(item => {
+      html += `
+        <div class="news-card">
+          <div class="news-top">
+            <div class="news-emoji">${item.emoji}</div>
+            <div class="news-meta">
+              <div class="news-cat">${item.cat}</div>
+              <div class="news-date">${item.date}</div>
+            </div>
+          </div>
+          <div class="news-body">
+            <div class="news-title">${item.title}</div>
+            <div class="news-text">${item.text}</div>
+            ${item.tag ? `<span class="news-tag">${item.tag}</span>` : ''}
+          </div>
+        </div>`;
+    });
+    document.getElementById('content').innerHTML = html || '<div class="error">Δεν βρέθηκαν ανακοινώσεις.</div>';
+  }
+
+  if (NEWS_CSV_URL === "ΒΑΛΕ_ΕΔΩ_ΤΟ_CSV_LINK") {
+    renderItems(DEMO);
+  } else {
+    fetch(NEWS_CSV_URL)
+      .then(r => { if (!r.ok) throw new Error(); return r.text(); })
+      .then(text => renderItems(parseCSV(text)))
+      .catch(() => renderItems(DEMO));
+  }
+</script>
+</body>
+</html>
