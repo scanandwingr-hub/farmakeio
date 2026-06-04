@@ -117,11 +117,18 @@
     return `<div class="exp-tag">⏱ Έως ${exp.toLocaleDateString('el-GR')}</div>`;
   }
 
+  function extractEmoji(str) {
+    if (!str) return '💊';
+    const match = str.match(/\p{Emoji}/u);
+    return match ? match[0] : '💊';
+  }
+
   function cardHtml(item, featured) {
     const emojiH = featured ? 90 : 75;
+    const emoji = extractEmoji(item.emoji);
     return `
       <div class="offer-card">
-        <div class="offer-emoji-wrap" style="height:${emojiH}px;">${item.emoji}</div>
+        <div class="offer-emoji-wrap" style="height:${emojiH}px;">${emoji}</div>
         <div class="offer-body">
           <div class="offer-name">${item.name}</div>
           ${item.desc ? `<div class="offer-desc">${item.desc}</div>` : ''}
