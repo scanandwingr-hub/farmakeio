@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Καλωσήρθατε</title>
+  <title>Προσφορές Φαρμακείου</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f6e56">
+  <link rel="apple-touch-icon" href="icon-192.png">
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -24,7 +27,18 @@
     .btn:active { opacity: 0.85; }
     .skip { text-align: center; margin-top: 0.85rem; font-size: 12px; color: #999; }
     .skip a { color: #1a6b4a; text-decoration: underline; cursor: pointer; }
+    .install-banner { display: none; background: #fff; border: 0.5px solid #c8e6d8; border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 0.85rem; align-items: center; gap: 12px; }
+    .install-icon { width: 44px; height: 44px; border-radius: 10px; background: #0f6e56; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
+    .install-text { flex: 1; min-width: 0; }
+    .install-text p { font-size: 13px; font-weight: 700; color: #1a1a1a; margin: 0 0 2px; }
+    .install-text span { font-size: 12px; color: #666; }
     .msg { display: none; background: #e8f4ee; border: 1px solid #9fd4b8; border-radius: 10px; padding: 0.85rem; text-align: center; font-size: 13px; color: #1a6b4a; margin-top: 0.75rem; }
+    .install-banner { display: none; background: #fff; border: 0.5px solid #c8e6d8; border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 0.85rem; align-items: center; gap: 12px; }
+    .install-icon { width: 44px; height: 44px; border-radius: 10px; background: #0f6e56; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
+    .install-text { flex: 1; min-width: 0; }
+    .install-text p { font-size: 13px; font-weight: 700; color: #1a1a1a; margin: 0 0 2px; }
+    .install-text span { font-size: 12px; color: #666; }
+    .install-btn { background: #0f6e56; color: #fff; border: none; border-radius: 20px; padding: 6px 14px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; flex-shrink: 0; font-family: 'Nunito', sans-serif; }
   </style>
 </head>
 <body>
@@ -64,6 +78,15 @@
     </div>
   </div>
 
+  <div class="install-banner" id="installBanner">
+    <div class="install-icon">📲</div>
+    <div class="install-text">
+      <p>Προσθέστε στην αρχική οθόνη!</p>
+      <span>Γρήγορη πρόσβαση στις προσφορές</span>
+    </div>
+    <button class="install-btn" onclick="installApp()">Εγκατάσταση</button>
+  </div>
+
   <button class="btn" onclick="submitForm()">➜ Δείτε τις προσφορές μας</button>
   <div class="msg" id="msg">✅ Η εγγραφή σας καταχωρήθηκε! Μεταφέρεστε στις προσφορές...</div>
   <div class="skip"><a onclick="goToOffers()">Παράλειψη — μετάβαση στις προσφορές</a></div>
@@ -71,6 +94,24 @@
 
 <script>
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzo45uFnm2wWhql--BBvnyGmBAePI4O23PeyC8QVrofh_hJglpGS_EPvcHrhInfqU6amQ/exec';
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
+
+  let deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    document.getElementById('installBanner').style.display = 'flex';
+  });
+
+  function installApp() {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(() => {
+        deferredPrompt = null;
+        document.getElementById('installBanner').style.display = 'none';
+      });
+    }
+  }
 
   function goToOffers() {
     window.location.href = 'offers.html';
